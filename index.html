@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Access-Control-Allow-Origin" content="*">
+    <title>星兽屏</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="js/jquery.min.js"></script>
+    <script src="https://kit.fontawesome.com/2b3087a6a1.js" crossorigin="anonymous"></script>
+</head>
+
+<body>
+    <div class="logo"><img src="sparkBoard.png" alt="">Ver0.5<sup>beta</sup></div>
+    <p class="time-show" id="time-value"></p>
+    <ul class="info-table">
+        <li>
+            <span class="name">考试科目：</span>
+            <div class="info" id="subject" contenteditable="true">语文</div>
+        </li>
+        <li>
+            <span class="name">考试时间：</span>
+            <div class="info" id="time" contenteditable="true">8:30-10:00</div>
+        </li>
+        <li style="display: flex;">
+            <span class="name">应到人数：</span>
+            <div class="info" id="total" contenteditable="true">25</div>
+        </li>
+        <li>
+            <span class="name">实到人数：</span>
+            <div class="info" id="current" contenteditable="true">24</div>
+        </li>
+        <li>
+            <span class="name">缺考：</span>
+            <div class="info" id="no" contenteditable="true"></div>
+        </li>
+        <li>
+            <span class="name">卫生负责人：</span>
+            <div class="info" id="clean" contenteditable="true">李泽皓</div>
+        </li>
+    </ul>
+    <div class="fog"></div>
+    <div class="circle-button" id="btn-fullscreen"><i class="fa-solid fa-expand fa-xs"></i></div>
+    <script>
+        // $.ajax({
+        //     url: "http://api.m.taobao.com/rest/api3.do?api=mtop.common.getTimestamp",
+        //     type: "GET",
+        //     // beforeSend: function (xhr) {
+        //     //     xhr.setRequestHeader('Access-Control-Allow-Origin', '*');
+        //     // },
+        //     dataType: 'jsonp',
+        //     success: function (data, status) {
+        //         console.log(data)
+        //     }
+        // })
+        // $.getJSON("http://api.m.taobao.com/rest/api3.do?api=mtop.common.getTimestamp", function (data, status) {
+        //     console.log(data);
+        // })
+        // $.ajax({
+        //     url: "http://api.m.taobao.com/rest/api3.do?api=mtop.common.getTimestamp",
+        //     type: "GET",
+        //     // dataType: 'jsonp',
+        //     xhrFields: {
+        //         withCredentials: true    // 此字段标识要跨域传数据
+        //     },
+        //     crossDomain: true,
+        //     success: function (data) {
+        //         console.log(data)
+        //     },
+        //     error: function (xhr, status, error) {
+        //         console.log(error.message)
+        //     }
+        // });
+
+        // function test(a) {
+        //     console.log(a);
+        // }
+
+        $.ajax({
+            url: "http://furryhub.top:5000/getServerTime",
+            type: "POST",
+            headers: {
+                Accept: "application/json",
+                "Content-type": "application/json"
+            },
+            dataType: 'json',
+            crossDomain: true,
+            success: function (res) {
+                console.log(res);
+                // //res.data.t为String类型的时间戳，所以需要先转换成Integer类型，再转换为Date类型
+                // var time = new Date(parseInt(res.data.t));
+                // //获取Hours，也可以获取年、月、日、秒等等
+                // var h = time.getHours();
+                // alert(h);
+            }
+        });
+
+        var timeEle = $("#time-value")
+        getTime()
+        $(document).ready(function () {
+            setInterval(getTime, 100)
+            $("body").contextmenu(function () {
+                return false
+            })
+        })
+        function getTime() {
+            //利用时间函数获取系统时间
+            var time = new Date()
+            var h = time.getHours()//小时
+            h = h < 10 ? '0' + h : h
+            var m = time.getMinutes()//分钟
+            m = m < 10 ? '0' + m : m
+            timeEle.html(`${h}:${m}`)
+        }
+
+        function requestFullscreen() {
+            const docElm = document.documentElement
+            if (docElm.requestFullscreen) {
+                docElm.requestFullscreen()
+            } else if (docElm.msRequestFullscreen) {
+                docElm.msRequestFullscreen()
+            } else if (docElm.mozRequestFullScreen) {
+                docElm.mozRequestFullScreen()
+            } else if (docElm.webkitRequestFullScreen) {
+                docElm.webkitRequestFullScreen()
+            }
+        }
+
+        function isFullscreen() {
+            return !(document.fullscreenElement ||
+                document.msFullscreenElement ||
+                document.mozFullScreenElement ||
+                document.webkitFullscreenElement);
+        }
+
+        function exitFullScreen() {
+            if (document.exitFullscreen) {
+                document.exitFullscreen()
+            } else if (document.msExitFullscreen) {
+                document.msExitFullscreen()
+            } else if (document.mozCancelFullScreen) {
+                document.mozCancelFullScreen()
+            } else if (document.webkitCancelFullScreen) {
+                document.webkitCancelFullScreen()
+            }
+        }
+
+        $("#btn-fullscreen").click(function () {
+            if (isFullscreen()) {
+                requestFullscreen()
+                $("#btn-fullscreen>i").removeClass("fa-expand");
+                $("#btn-fullscreen>i").addClass("fa-compress");
+            } else {
+                exitFullScreen()
+                $("#btn-fullscreen>i").removeClass("fa-compress");
+                $("#btn-fullscreen>i").addClass("fa-expand");
+            }
+        })
+    </script>
+</body>
+
+</html>
